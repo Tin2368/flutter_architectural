@@ -1,12 +1,8 @@
-import 'package:core_libs/dependency_injection/get_it.dart';
 import 'package:core_ui/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:product/features/home/domain/entities/product.dart';
-import 'package:product/features/home/domain/port/product/service.dart';
 import 'package:product/features/home/presentation/widgets/catalog.dart';
 import 'package:product/features/home/presentation/widgets/home_jumbotron.dart';
 import 'package:product/mocks/products.dart';
-import 'package:go_router/go_router.dart';
 import 'package:core_ui/widgets/compounds/loading/loading_indicator.dart';
 import 'package:core_ui/widgets/compounds/navbar/home_nav.dart';
 import 'package:product/features/home/presentation/viewmodels/home_viewmodel.dart';
@@ -68,22 +64,6 @@ class _ProductHomePageState extends ConsumerState<ProductHomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar( 
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',  
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',  
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile', 
-          ),
-        ],
-    ),
     );
   }
 }

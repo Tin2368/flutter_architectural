@@ -1,9 +1,12 @@
 import 'package:core_libs/dependency_injection/get_it.dart';
 import 'package:flutter/material.dart';
-import 'package:product/features/home/domain/port/product/service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:product/infrastructure/dependency_injection/inject.dart';
 
 void main() {
-  runApp(const MyApp());
+   registerCoreServices();
+  registerProductServices();
+   runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

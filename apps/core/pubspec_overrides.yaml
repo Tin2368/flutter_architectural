@@ -6,3 +6,5 @@ dependency_overrides:
     path: ../../packages/core_ui
   product:
     path: ../product
+  user:
+    path: ../user
