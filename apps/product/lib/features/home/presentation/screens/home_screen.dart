@@ -1,4 +1,5 @@
 import 'package:core_libs/dependency_injection/get_it.dart';
+import 'package:core_ui/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:product/features/home/domain/entities/product.dart';
 import 'package:product/features/home/domain/port/product/service.dart';
@@ -8,86 +9,54 @@ import 'package:product/mocks/products.dart';
 import 'package:go_router/go_router.dart';
 import 'package:core_ui/widgets/compounds/loading/loading_indicator.dart';
 import 'package:core_ui/widgets/compounds/navbar/home_nav.dart';
+import 'package:product/features/home/presentation/viewmodels/home_viewmodel.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
-class ProductHomePage extends StatefulWidget {
+class ProductHomePage extends ConsumerStatefulWidget {
   const ProductHomePage({super.key});
 
   @override
-  State<ProductHomePage> createState() => _ProductHomePageState();
+  ConsumerState<ProductHomePage> createState() => _ProductHomePageState();
 }
 
-class _ProductHomePageState extends State<ProductHomePage> {
-  late final IProductService service = getIt.get<IProductService>();
-
-  List<List<ProductToDisplay>> products = [];
-  List<String> categories = [];
-
-   int _selectedIndex = 0;  // ตัวแปรเก็บ index ของ tab ที่เลือก
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;  // อัปเดต tab ที่เลือก
-    });
-  }
-
-  bool isLoading = false;
+class _ProductHomePageState extends ConsumerState<ProductHomePage> {
 
   @override
   void initState() {
-    getProducts();
     super.initState();
-  }
-
-  void getProducts() async {
-    setState(() {
-      isLoading = true;
+    Future((){
+      ref.read(homeViewModelProvider.notifier).getProducts();
     });
-    // Get category ทั้งหมด
-    final categories = await service.getCategories();
-    // Loop สร้าง Future list ในการเรียกดู product by category เอาไว้
-    final productsFetchers = categories.map((e) => service.getByCategory(e));
-    // เอา Future list ทั้งหมดมารอ reponse พร้อมๆกัน
-    // ข้อดี: ทุกเส้นถูกเรียกพร้อมกัน ใช้เวลาเท่าเส้นที่เรียกนานที่สุด
-    // ข้อเสีย: Server รับ load มากขึ้น เพราะถูกเรียกพร้อมกันทีเดียวหลายเส้น ต้องมีการวางแผน scaling ที่ดี
-    final products = await Future.wait(productsFetchers);
-
-    setState(() {
-      this.categories = categories;
-      this.products = products;
-      isLoading = false;
-    });
-  }
-
-  void onSelectProduct(ProductToDisplay product) {
-    context.pushNamed('detail', extra: product);
   }
 
   @override
   Widget build(BuildContext context) {
+    final homeVM = ref.watch(homeViewModelProvider);
+    final color = ref.watch(appThemeProvider).themeColor;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: color.backgroundPrimary,
       body: SafeArea(
         child: Column(
           children: [
             const HomeNavbar(),
             Expanded(
-                child: isLoading
+                child: homeVM.loading
                     ? const Loading()
                     : ListView.builder(
-                        itemCount: categories.length,
+                        itemCount: homeVM.categories.length,
                         itemBuilder: (context, index) {
                           return Column(
                             key: UniqueKey(),
                             children: [
                               HomeJumbotron(
-                                  imageUrl: categoryImages[categories[index]]!,
-                                  title: categories[index].toUpperCase(),
+                                  imageUrl: categoryImages[homeVM.categories[index]]!,
+                                  title: homeVM.categories[index].toUpperCase(),
                                   buttonTitle: 'View Collection'),
                               Catalog(
                                 title: 'All products',
-                                products: products[index],
-                                onSelectProduct: onSelectProduct,
+                                products: homeVM.products[index],
+                               
                               ),
                               const SizedBox(
                                 height: 24,
@@ -114,9 +83,6 @@ class _ProductHomePageState extends State<ProductHomePage> {
             label: 'Profile', 
           ),
         ],
-        currentIndex: _selectedIndex,  // กำหนด tab ที่เลือก
-        selectedItemColor: Colors.blue,  // สีของ tab ที่เลือก
-        onTap: _onItemTapped, 
     ),
     );
   }
