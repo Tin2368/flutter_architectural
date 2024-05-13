@@ -32,14 +32,15 @@ class _BottomNavigationState extends State<BottomNavigation> {
       body: widget.child,
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.green,
+        backgroundColor: Colors.black,
+        selectedItemColor: Colors.orangeAccent,
         unselectedItemColor: Colors.grey,
         currentIndex: _currentIndex,
         onTap: (index) {
           onTap(context, index);
         },
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.shop), label: 'Shopping'),
+          BottomNavigationBarItem(icon: Icon(Icons.shopify), label: 'Shopping'),
           BottomNavigationBarItem(icon: Icon(Icons.people), label: 'User'),
         ],
       ),

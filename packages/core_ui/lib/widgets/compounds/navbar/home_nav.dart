@@ -25,10 +25,12 @@ class HomeNavbar extends ConsumerWidget {
                 onPressed: themeNotifier.switchTheme,
                 icon: Icon(
                   themeProvider.selectedTheme == Themes.light
-                   ? Icons.dark_mode
-                   : Icons.light_mode,
-                  color: Colors.white70,
+                   ? Icons.dark_mode_outlined
+                   : Icons. light_mode_outlined,
                   size: 40,
+                  color: themeProvider.selectedTheme == Themes.light
+                  ? Colors.orange 
+                 : Colors.yellow,
                 )),
           ],
         ),
